@@ -39,6 +39,8 @@ const Categorias = () => {
     // Variables Globales
     const nombre_meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre','Diciembre'];
     const [cargandoG, setCargandoG] = useState(true);
+    const mesActual = fechaActual.getMonth();
+    const actualYear = fechaActual.getFullYear(); 
 
     const totalGastos = () =>{
         return formatearCantidad(gastos.reduce( (acc, gastos) => acc + gastos.cantidad, 0 ));
@@ -50,16 +52,15 @@ const Categorias = () => {
         let tiempo;
         if(cargandoG){
             tiempo = setTimeout(async () => {
-                // obtenerGastos();
                 await getGastos();
                 setCargandoG(false);
-            }, 2000);
+            }, 0);
         }
         setGastos(gastosPorCategoria)
         
         return (() => clearTimeout(tiempo));
         
-    }, [cargandoG])
+    }, [cargandoG, gastosPorCategoria, getGastos])
     
     useEffect(() => {
         // Sumar los gastos y devolverlos en un objetos cada ez que cambie el estado 'Gastos'
@@ -92,17 +93,18 @@ const Categorias = () => {
     useEffect(() => {
         // Se obtiene el mes, la fecha y los gastos dependiendo de la fecha Actual
         let tiempo;
+        
         if(cambioFecha){
             tiempo = setTimeout(async () => {
-            setMes(fechaActual.getMonth());
-            setYear(fechaActual.getFullYear());
+            setMes(mesActual);
+            setYear(actualYear);
             await getGastos();
             setCambioFecha(false);
-        }, 500)
+        }, 0)
     }
     setGastos(gastosPorCategoria)
         return (() => clearTimeout(tiempo))
-    }, [cambioFecha])
+    }, [cambioFecha, gastosPorCategoria, getGastos, setCambioFecha, mesActual, actualYear])
 
     return (
         <> 
